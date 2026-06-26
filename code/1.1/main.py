@@ -6,6 +6,7 @@ from getAttraction import get_attraction
 
 import re
 import os
+from api import API_KEY_Deepseek, BASE_URL_Deepseek, TAVILY_API_KEY
 
 # print(available_tools)
 '''
@@ -16,11 +17,11 @@ import os
 
 # --- 1. 配置LLM客户端 ---
 # 请根据您使用的服务，将这里替换成对应的凭证和地址
-API_KEY = "sk-261b8330bd0e421caad808780cb98764"
-BASE_URL = "https://api.deepseek.com"
+API_KEY = API_KEY_Deepseek
+BASE_URL = BASE_URL_Deepseek
 MODEL_ID = "deepseek-v4-pro"
-TAVILY_API_KEY="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"
-os.environ['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'] = "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"
+TAVILY_API_KEY=TAVILY_API_KEY
+os.environ[TAVILY_API_KEY] = TAVILY_API_KEY
 
 # 构建一个符合 openai 规范的 llm 调用接口
 llm = OpenAICompatibleClient(
