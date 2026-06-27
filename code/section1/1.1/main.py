@@ -3,8 +3,6 @@
 from prompt import AGENT_SYSTEM_PROMPT
 from availableTool import available_tools
 from OpenAICompatibleClient import OpenAICompatibleClient
-from getWeather import get_weather
-from getAttraction import get_attraction
 
 import re
 import os
@@ -21,7 +19,7 @@ API_KEY = keys.LLM_KEY
 BASE_URL = keys.LLM_BASE_URL
 MODEL_ID = keys.LLM_NAME
 TAVILY_API_KEY=keys.TAVILY_KEY
-os.environ['TAVILY_API_KEY'] = keys.TAVILY_KEY
+os.environ['TAVILY_API_KEY'] = keys.TAVILY_KEY  # 把tavily的key传入os环境变量，之后同一个进程可以共享，相当于thread_local
 
 # 构建一个符合 openai 规范的 llm 调用接口
 llm = OpenAICompatibleClient(

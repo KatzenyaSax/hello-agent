@@ -3,12 +3,13 @@
 import os
 from tavily import TavilyClient
 
+
 def get_attraction(city: str, weather: str) -> str:
     """
     根据城市和天气，使用Tavily Search API搜索并返回优化后的景点推荐。
     """
     # 1. 从环境变量中读取API密钥
-    api_key = os.environ.get("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")
+    api_key = os.environ.get('TAVILY_API_KEY')
     if not api_key:
         return "错误:未配置TAVILY_API_KEY环境变量。"
 
