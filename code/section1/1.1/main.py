@@ -1,3 +1,5 @@
+
+
 from prompt import AGENT_SYSTEM_PROMPT
 from availableTool import available_tools
 from OpenAICompatibleClient import OpenAICompatibleClient
@@ -6,22 +8,20 @@ from getAttraction import get_attraction
 
 import re
 import os
-from api import API_KEY_Deepseek, BASE_URL_Deepseek, TAVILY_API_KEY
+import sys 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
-# print(available_tools)
-'''
-输出：
-{'get_weather': <function get_weather at 0x000001C073B534C0>, 'get_attraction': <function get_attraction at 0x000001C073B532E0>}
-'''
+
+import keys
 
 
 # --- 1. 配置LLM客户端 ---
 # 请根据您使用的服务，将这里替换成对应的凭证和地址
-API_KEY = API_KEY_Deepseek
-BASE_URL = BASE_URL_Deepseek
-MODEL_ID = "deepseek-v4-pro"
-TAVILY_API_KEY=TAVILY_API_KEY
-os.environ[TAVILY_API_KEY] = TAVILY_API_KEY
+API_KEY = keys.LLM_KEY
+BASE_URL = keys.LLM_BASE_URL
+MODEL_ID = keys.LLM_NAME
+TAVILY_API_KEY=keys.TAVILY_KEY
+os.environ['TAVILY_API_KEY'] = keys.TAVILY_KEY
 
 # 构建一个符合 openai 规范的 llm 调用接口
 llm = OpenAICompatibleClient(
@@ -32,7 +32,13 @@ llm = OpenAICompatibleClient(
 
 
 # --- 2. 初始化 ---
-user_prompt = "你好，请帮我查询一下今天重庆的天气，然后根据天气推荐一个合适的旅游景点。"
+print("请选择提示词输入模式：1.系统默认；2.自行输入")
+if(input()=="1"):
+    user_prompt = "你好，请帮我查询一下今天重庆的天气，然后根据天气推荐一个合适的旅游景点。"
+else:
+    print("请输入文本：\n")
+    user_prompt = input()
+
 prompt_history = [f"用户请求: {user_prompt}"]
 
 print(f"用户输入: {user_prompt}\n" + "="*40)
