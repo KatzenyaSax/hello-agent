@@ -90,6 +90,7 @@ class ReActAgent:
             else:
                 observation = tool_function(tool_input) # 调用真实工具
 
+            # 5. 将 Action 和 Observation 写入 history
             print(f"👀 观察: {observation}")
             
             # 将本轮的Action和Observation添加到历史记录中
