@@ -48,6 +48,28 @@ class LLM:
             print(f"❌ 调用LLM API时发生错误: {e}")
             return None
         
+    def think_stream(self, messages: List[Dict[str, str]], temperature: float = 0):
+        """
+        流式调用大语言模型进行思考，逐步返回其响应。
+        """
+        print(f"🧠 正在流式调用 {self.model} 模型...")
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=temperature,
+                stream=True,
+            )
+            for chunk in response:
+                if not chunk.choices:
+                    continue
+                content = chunk.choices[0].delta.content or ""
+                yield content
+
+        except Exception as e:
+            print(f"❌ 调用LLM API时发生错误: {e}")
+            yield None
+        
 # --- 客户端使用示例 ---
 if __name__ == '__main__':
     try:

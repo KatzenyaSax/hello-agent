@@ -59,6 +59,14 @@ class ToolRegistry:
             raise ValueError(f"工具 '{name}' 未注册。")
         return self._tools[name]
 
+    def is_function(self, name: str) -> bool:
+        """判断一个工具名是否为函数类型"""
+        return name in self._functions
+
+    def is_tool(self, name: str) -> bool:
+        """判断一个工具名是否为Tool对象类型"""
+        return name in self._tools
+
     def get_tools_description(self) -> str:
         """获取所有可用工具的格式化描述字符串"""
         descriptions = []
