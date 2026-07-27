@@ -3,3 +3,4 @@ code/keys.py
 helloCli/.env
 HelloAgent/.env
 
+/memory_data/memory.db

@@ -1,19 +1,7 @@
-from agent.simpleAgent import SimpleAgent
-from core.llm import LLM
-from tool.toolRegistry import ToolRegistry
-
 from tool.builtin.memoryTool import MemoryTool
-
-
-# 创建具有记忆能力的Agent
-llm = LLM()
-agent = SimpleAgent(name="记忆助手", llm=llm)
 
 # 创建记忆工具
 memory_tool = MemoryTool(user_id="user123")
-tool_registry = ToolRegistry()
-tool_registry.register_tool(memory_tool)
-agent.tool_registry = tool_registry
  
 # 体验记忆功能
 print("=== 添加多个记忆 ===")
@@ -23,7 +11,7 @@ result1 = memory_tool.run({"action": "add", "content": "用户张三是一名Pyt
 print(f"记忆1: {result1}")
 
 # 添加第二个记忆
-result2 = memory_tool.run({"action": "add", "content": "李四是前端工程师，擅长React和Vue.js开发", "memory_type": "episodic", "importance": 0.7})
+result2 = memory_tool.run({"action": "add", "content": "李四是前端工程师，擅长React和Vue.js开发", "memory_type": "working", "importance": 0.7})
 print(f"记忆2: {result2}")
 
 # 添加第三个记忆

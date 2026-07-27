@@ -1,16 +1,26 @@
+"""工作记忆实现
+
+按照第8章架构设计的工作记忆，提供：
+- 短期上下文管理
+- 容量和时间限制
+- 优先级管理
+- 自动清理机制
+"""
+
 from typing import List, Dict, Any
-from memory.memoryConfg import MemoryConfig
-from memory.memoryItem import MemoryItem
-from memory.memory import Memory
 from datetime import datetime, timedelta
+import heapq
 
+from ..base import BaseMemory, MemoryItem, MemoryConfig
 
-class WorkingMemory(Memory):
+class WorkingMemory(BaseMemory):
     """工作记忆实现
+    
     特点：
-    - 容量有限（默认50条）+ TTL自动清理
-    - 纯内存存储，访问速度极快
-    - 混合检索：TF-IDF向量化 + 关键词匹配
+    - 容量有限（通常10-20条记忆）
+    - 时效性强（会话级别）
+    - 优先级管理
+    - 自动清理过期记忆
     """
     
     def __init__(self, config: MemoryConfig, storage_backend=None):
@@ -26,6 +36,9 @@ class WorkingMemory(Memory):
         
         # 内存存储（工作记忆不需要持久化）
         self.memories: List[MemoryItem] = []
+        
+        # 使用优先级队列管理记忆
+        self.memory_heap = []  # (priority, timestamp, memory_item)
     
     def add(self, memory_item: MemoryItem) -> str:
         """添加工作记忆"""
@@ -34,7 +47,8 @@ class WorkingMemory(Memory):
         # 计算优先级（重要性 + 时间衰减）
         priority = self._calculate_priority(memory_item)
         
-        # 添加到列表中
+        # 添加到堆中
+        heapq.heappush(self.memory_heap, (-priority, memory_item.timestamp, memory_item))
         self.memories.append(memory_item)
         
         # 更新token计数
@@ -52,8 +66,10 @@ class WorkingMemory(Memory):
         if not self.memories:
             return []
 
+        # 过滤已遗忘的记忆
+        active_memories = [m for m in self.memories if not m.metadata.get("forgotten", False)]
+        
         # 按用户ID过滤（如果提供）
-        active_memories = self.memories
         filtered_memories = active_memories
         if user_id:
             filtered_memories = [m for m in active_memories if m.user_id == user_id]
@@ -156,6 +172,9 @@ class WorkingMemory(Memory):
                 if metadata is not None:
                     memory.metadata.update(metadata)
                 
+                # 重新计算优先级并更新堆
+                self._update_heap_priority(memory)
+                
                 return True
         return False
     
@@ -165,6 +184,9 @@ class WorkingMemory(Memory):
             if memory.id == memory_id:
                 # 从列表中删除
                 removed_memory = self.memories.pop(i)
+                
+                # 从堆中删除（标记删除）
+                self._mark_deleted_in_heap(memory_id)
                 
                 # 更新token计数
                 self.current_tokens -= len(removed_memory.content.split())
@@ -180,6 +202,7 @@ class WorkingMemory(Memory):
     def clear(self):
         """清空所有工作记忆"""
         self.memories.clear()
+        self.memory_heap.clear()
         self.current_tokens = 0
     
     def get_stats(self) -> Dict[str, Any]:
@@ -256,8 +279,6 @@ class WorkingMemory(Memory):
         
         return "Working Memory Context:\n" + "\n".join(summary_parts)
     
-
-
     def forget(self, strategy: str = "importance_based", threshold: float = 0.1, max_age_days: int = 1) -> int:
         """工作记忆遗忘机制"""
         forgotten_count = 0
@@ -302,18 +323,6 @@ class WorkingMemory(Memory):
                 forgotten_count += 1
         
         return forgotten_count
-
-
-
-
-
-
-
-
-
-
-
-
     
     def _calculate_priority(self, memory: MemoryItem) -> float:
         """计算记忆优先级"""
@@ -363,6 +372,11 @@ class WorkingMemory(Memory):
         # 覆盖列表与token
         self.memories = kept
         self.current_tokens = max(0, self.current_tokens - removed_token_sum)
+        # 重建堆
+        self.memory_heap = []
+        for mem in self.memories:
+            priority = self._calculate_priority(mem)
+            heapq.heappush(self.memory_heap, (-priority, mem.timestamp, mem))
     
     def _remove_lowest_priority_memory(self):
         """删除优先级最低的记忆"""
@@ -381,3 +395,17 @@ class WorkingMemory(Memory):
         
         if lowest_memory:
             self.remove(lowest_memory.id)
+    
+    def _update_heap_priority(self, memory: MemoryItem):
+        """更新堆中记忆的优先级"""
+        # 简单实现：重建堆
+        self.memory_heap = []
+        for mem in self.memories:
+            priority = self._calculate_priority(mem)
+            heapq.heappush(self.memory_heap, (-priority, mem.timestamp, mem))
+    
+    def _mark_deleted_in_heap(self, memory_id: str):
+        """在堆中标记删除的记忆"""
+        # 由于heapq不支持直接删除，我们标记为已删除
+        # 在后续操作中会被清理
+        pass

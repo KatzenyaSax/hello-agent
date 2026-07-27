@@ -1,0 +1,16 @@
+╭─── Claude Code v2.1.216 ─────────────────────────────────────────────────────╮
+│                                             │ Tips for getting started       │
+│                Welcome back!                │ Run /init to create a CLAUDE.… │
+│                                             │ ────────────────────────────── │
+│                   ▐▛███▜▌                   │ What's new                     │
+│                  ▝▜█████▛▘                  │ Auto mode is now available wi… │
+│                    ▘▘ ▝▝                    │ Fixed the terminal freezing a… │
+│                                             │ Fixed remote managed settings… │
+│   deepseek-v4-pro[1m] · API Usage Billing   │ /release-notes for more        │
+│            ~\Desktop\hello-agent            │                                │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+
+ ⚠ Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set · auth may not work as expected
+   · to use ANTHROPIC_AUTH_TOKEN: Unset the ANTHROPIC_API_KEY environment variable, or claude /logout then say "No" to the API key approval before login.
+   · to use ANTHROPIC_API_KEY: Unset the ANTHROPIC_AUTH_TOKEN environment variable.
