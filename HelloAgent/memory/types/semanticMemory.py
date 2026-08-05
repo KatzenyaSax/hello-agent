@@ -4,7 +4,6 @@ import json
 import logging
 import math
 import numpy as np
-import spacy
 import os
 
 
@@ -162,6 +161,7 @@ class SemanticMemory(Memory):
             raise
     
     def _init_nlp(self):
+        import spacy
         """初始化NLP处理器 - 智能多语言支持"""
         try:
             self.nlp_models = {}

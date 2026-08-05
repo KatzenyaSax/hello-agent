@@ -4,3 +4,13 @@ helloCli/.env
 HelloAgent/.env
 
 /memory_data/memory.db
+
+
+HelloAgent/.agents/
+HelloAgent/.claude/
+HelloAgent/.lib/
+HelloAgent/data_pipeline_refactoring_kb/
+HelloAgent/data_pipeline_refactoring_notes/
+HelloAgent/data_science_kb/
+HelloAgent/knowledge_base/
+HelloAgent/memory_data/

@@ -45,13 +45,11 @@ class RAGTool(Tool):
         qdrant_url: str = None,
         qdrant_api_key: str = None,
         collection_name: str = "rag_knowledge_base",
-        rag_namespace: str = "default",
-        expandable: bool = False
+        rag_namespace: str = "default"
     ):
         super().__init__(
             name="rag",
-            description="RAG工具 - 支持多格式文档检索增强生成，提供智能问答能力",
-            expandable=expandable
+            description="RAG工具 - 支持多格式文档检索增强生成，提供智能问答能力"
         )
         
         self.knowledge_base_path = knowledge_base_path
